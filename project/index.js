@@ -1,108 +1,97 @@
+document.addEventListener('DOMContentLoaded', function(){
+    console.log('Ya se cargo la pagina...');
 
-// Document Ready
-document.addEventListener('DOMContentLoaded', function () {
+    document.getElementById("btnAgregar").onclick = function(){
 
-    let counter=0;
-    console.log("¡Ya cargo todo el HTML!");
+        console.log('Agregando Gasto...');
 
-    document.getElementById("btnAgregar").onclick = function(e) {
-        console.log('Procesando almacenamiento.....');
-    
-        let nombreGasto = document.getElementById("nombreGasto").value;
-        let monto = document.getElementById("monto").value;
-    
+        let nombreGasto = document.getElementById('nombreGasto').value;
+        let monto = document.getElementById('monto').value;
+
         crearRegistro(nombreGasto, monto);
-        limpiarFormulario();
+        limpiarCampos();
     }
-    
+
+    let limpiarCampos = function() {
+        document.getElementById('nombreGasto').value = "";
+        document.getElementById('monto').value = "";
+    }
+
     let guardarLocalStorage = function(nombreGasto, monto, idGasto) {
-        
-        console.log('Guardando en LocalStorage.....');
-        // Objeto Gastos
+
+        let miStorage = window.localStorage;
+
         let objetoGasto = {
             "idGasto"       : idGasto,
             "nombreGasto"   : nombreGasto,
-            "monto"         : monto,
-        };
-    
-        // Local Storage
-        let miStorage = window.localStorage;
+            "monto"         : monto
+        }; 
+
         miStorage.setItem("gastoID:" + idGasto, JSON.stringify(objetoGasto));
     }
-    
-    let limpiarFormulario = function(){
-        document.getElementById("nombreGasto").value = "";
-        document.getElementById("monto").value = "";
-    };
-    
-    let crearRegistro = function(gasto, monto) {
-    
-        console.log('Creando Registro: ', gasto, monto);
+
+    let counter=0;
+    let crearRegistro = function (gasto, monto) {
+
         counter++;
-    
-        // Obtener Tabla
-        let tablaGastos = document.getElementById("tablaGastos");
-    
-        // Creando Elementos
+        let tablaGastos = document.getElementById('tablaGastos');
+
         let tableRow = document.createElement("tr");
-        let tdCounter = document.createElement("td"); 
+        let tdCounter = document.createElement("td");
         let tdGasto = document.createElement("td");
         let tdMonto = document.createElement("td");
-    
-        // Creando un ID al TR
+
         tableRow.id = counter;
-    
+
         tdCounter.innerHTML = counter;
         tdGasto.innerHTML = gasto;
         tdMonto.innerHTML = monto;
+
         tableRow.appendChild(tdCounter);
         tableRow.appendChild(tdGasto);
         tableRow.appendChild(tdMonto);
-    
+
         tablaGastos.appendChild(tableRow);
-    
-        // Guardando en LocalStore
+
         guardarLocalStorage(gasto, monto, counter);
     }
-    
-    let loadLocalStorageData = function() {
 
-        let saveElementsNum = window.localStorage.length;
-        if(saveElementsNum > 0) {
-            for(let i=1; i <= saveElementsNum; i++){
+    let cargarLocalStorage = function() {
 
-                // SET the index of Global Counter
+        let numElement = window.localStorage.length;
+
+        if(numElement > 0){
+
+            let tablaGastos = document.getElementById('tablaGastos');
+            
+            for(let i=1; i <= numElement; i++){
+
                 counter = i;
                 let tableRow = document.createElement("tr");
-                let tdCounter = document.createElement("td"); 
+                let tdCounter = document.createElement("td");
                 let tdGasto = document.createElement("td");
                 let tdMonto = document.createElement("td");
 
-                // Get Elements from LocalStorage
-                const row = window.localStorage.getItem("gastoID:" + i);
-                let rowObjet = JSON.parse(row);
+                let registro = window.localStorage.getItem('gastoID:' + i);
+                let registroObjet = JSON.parse(registro);
 
-                // Set ID Row
-                tableRow.id = rowObjet.idGasto;
-    
-                tdCounter.innerHTML = rowObjet.idGasto;
-                tdGasto.innerHTML = rowObjet.nombreGasto;
-                tdMonto.innerHTML = rowObjet.monto;
+                tableRow.id = registroObjet.idGasto;
+
+                tdCounter.innerHTML = registroObjet.idGasto;
+                tdGasto.innerHTML = registroObjet.nombreGasto;
+                tdMonto.innerHTML = registroObjet.monto;
 
                 tableRow.appendChild(tdCounter);
                 tableRow.appendChild(tdGasto);
                 tableRow.appendChild(tdMonto);
-            
+
                 tablaGastos.appendChild(tableRow);
             }
+
         } else {
-            console.log('No Hay gastos que mostrar...');
+            console.log('No hay elementos que cargar....')
         }
     }
 
-    // Loading localStorage
-    loadLocalStorageData();
+    cargarLocalStorage();
 });
-
-
-
